@@ -53,6 +53,40 @@ jobs:
 > - Requires `pull-requests: read` when `version-bump` is empty (PR-label resolution path)
 > - Must configure workflow `concurrency` with `cancel-in-progress: false` to avoid tag collisions
 
+## Release workflow with an optional floating major tag
+
+The action computes the next tag but does not write it. A release workflow can publish the exact tag first, then optionally move a floating major tag as a separate final step:
+
+```yaml
+- name: Compute next version
+  id: bump
+  uses: faisal-memon/pr-label-semver@v0
+  with:
+    tag-prefix: api-v
+    github-token: ${{ github.token }}
+
+- name: Build and push image
+  uses: docker/build-push-action@v7
+  with:
+    context: .
+    push: true
+    tags: ghcr.io/${{ github.repository_owner }}/rag-agent-api:${{ steps.bump.outputs.new-tag }}
+
+- name: Create exact GitHub release
+  uses: softprops/action-gh-release@v3
+  with:
+    tag_name: ${{ steps.bump.outputs.new-tag }}
+    generate_release_notes: true
+
+# Optional and separate: this moves api-v0 to the exact release commit.
+- name: Move floating major tag
+  run: |
+    git tag -f api-v0 ${{ steps.bump.outputs.new-tag }}
+    git push --force origin refs/tags/api-v0
+```
+
+The exact release is valid if the optional floating-tag step fails. The operations are intentionally separate because GitHub does not provide a transaction covering the release and floating tag.
+
 ## Inputs
 
 | Input | Default | Description |
