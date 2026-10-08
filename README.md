@@ -101,6 +101,7 @@ The exact release is valid if the optional floating-tag step fails. The operatio
 | Output | Description |
 | --- | --- |
 | `new-tag` | Computed next tag (for example `v1.4.2`). |
+| `major-tag` | Computed floating major tag (for example `v1`). |
 | `previous-tag` | Latest existing tag used as the bump source. |
 | `version-bump-used` | Resolved bump type actually applied. |
 | `release-skipped` | `true` when an ignored label is present without a semver label; publishing steps should be skipped. |

@@ -24,7 +24,7 @@ def main() -> int:
         # labels on the PR.
         bump_type = compute_bump_type(config, git)
         if bump_type is None:
-            write_outputs("", "", "", release_skipped=True)
+            write_outputs("", "", "", "", release_skipped=True)
             log_info("Skipping release because the associated PR has an ignored label and no semver label")
             return 0
 
@@ -35,7 +35,7 @@ def main() -> int:
 
         log_info(f"Resolved bump={bump_type} from previous={previous_tag} to new={new_tag}")
 
-        write_outputs(new_tag, previous_tag, bump_type, release_skipped=False)
+        write_outputs(new_tag, semver_tags.major_tag_for(new_tag), previous_tag, bump_type, release_skipped=False)
         log_info(
             "Wrote outputs "
             f"new-tag={new_tag} previous-tag={previous_tag} version-bump-used={bump_type}"
@@ -77,7 +77,7 @@ def compute_bump_type(config: Config, git: Git) -> str | None:
     return "patch"
 
 
-def write_outputs(new_tag: str, previous_tag: str, version_bump_used: str, *, release_skipped: bool) -> None:
+def write_outputs(new_tag: str, major_tag: str, previous_tag: str, version_bump_used: str, *, release_skipped: bool) -> None:
     """Append action outputs to the GitHub output file."""
     output_path = env("GITHUB_OUTPUT")
     if not output_path:
@@ -85,6 +85,7 @@ def write_outputs(new_tag: str, previous_tag: str, version_bump_used: str, *, re
 
     with open(output_path, "a", encoding="utf-8") as handle:
         handle.write(f"new-tag={new_tag}\n")
+        handle.write(f"major-tag={major_tag}\n")
         handle.write(f"previous-tag={previous_tag}\n")
         handle.write(f"version-bump-used={version_bump_used}\n")
         handle.write(f"release-skipped={'true' if release_skipped else 'false'}\n")
