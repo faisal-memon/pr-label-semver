@@ -43,8 +43,6 @@ class PullRequestResolutionFlowTests(unittest.TestCase):
                 sha="abc123",
                 target_branch="main",
             ),
-            write_tag=False,
-            write_major_tag=False,
             tag_prefix="v",
         )
         git = FakeGitForPullRequestLabels((42, ["semver:minor"]))
@@ -67,8 +65,6 @@ class PullRequestResolutionFlowTests(unittest.TestCase):
                 sha="abc123",
                 target_branch="main",
             ),
-            write_tag=False,
-            write_major_tag=False,
             tag_prefix="v",
         )
         git = FakeGitForPullRequestLabels(None)
@@ -91,8 +87,6 @@ class PullRequestResolutionFlowTests(unittest.TestCase):
                 sha="abc123",
                 target_branch="main",
             ),
-            write_tag=False,
-            write_major_tag=False,
             tag_prefix="v",
         )
         git = FakeGitForPullRequestLabels((42, ["dependencies", "team:platform"]))

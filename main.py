@@ -30,15 +30,6 @@ def main() -> int:
 
         log_info(f"Resolved bump={bump_type} from previous={previous_tag} to new={new_tag}")
 
-        if config.write_tag:
-            log_info(f"write-tag=true; creating and pushing {new_tag}")
-            git.push_tag(new_tag)
-
-            if config.write_major_tag:
-                major_tag = semver_tags.major_tag_for(new_tag)
-                log_info(f"write-major-tag=true; updating floating major tag {major_tag}")
-                git.push_major_tag(major_tag)
-
         write_outputs(new_tag, previous_tag, bump_type)
         log_info(
             "Wrote outputs "

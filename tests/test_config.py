@@ -15,8 +15,6 @@ class ConfigValidationTests(unittest.TestCase):
                 sha="",
                 target_branch="",
             ),
-            write_tag=False,
-            write_major_tag=False,
             tag_prefix="v",
         )
 
@@ -33,8 +31,6 @@ class ConfigValidationTests(unittest.TestCase):
                 sha="",
                 target_branch="",
             ),
-            write_tag=False,
-            write_major_tag=False,
             tag_prefix="v",
         )
 

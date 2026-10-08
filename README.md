@@ -4,7 +4,6 @@ Use pull request labels to update semantic version tags.
 
 - Labels `semver:major`, `semver:minor`, or `semver:patch` update the corresponding part of semantic version
 - Defaults to `patch` if no label is specified
-- Automatic tracking of floating major tag to latest tag, i.e. `v1` -> `v1.2.3`
 
 ## Quick Start
 
@@ -31,12 +30,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Bump and write version tag
+      - name: Compute next version
         id: bump
         uses: faisal-memon/pr-label-semver@v0
         with:
-          write-tag: "true"
-          write-major-tag: "true"
           github-token: ${{ github.token }}
 
       - name: Create GitHub Release
@@ -50,7 +47,7 @@ jobs:
 > [!NOTE]
 > - Ensure `actions/checkout` uses `fetch-depth: 0`
 > - GitHub-hosted runners already include `python3`; self-hosted runners need Python 3 available on `PATH`
-> - Requires workflow permissions: `contents: write` to be able to write the semantic version tag
+> - The action computes the tag only; the following release step should create it after publishing succeeds
 > - Requires `pull-requests: read` when `version-bump` is empty (PR-label resolution path)
 > - Must configure workflow `concurrency` with `cancel-in-progress: false` to avoid tag collisions
 
@@ -61,8 +58,6 @@ jobs:
 | `github-token` | `""` | Token used to query PR labels. Required when `version-bump` is empty (or provide `GITHUB_TOKEN` env). |
 | `tag-prefix` | `v` | Prefix to apply to tags (for example `v1.2.3`). |
 | `version-bump` | `""` | Explicit bump override: `major`, `minor`, or `patch`. Useful for `workflow_dispatch` or manual override. |
-| `write-major-tag` | `"false"` | When `true` and `write-tag` is `true`, moves and pushes floating major tag (for example `v1` or `v0`). |
-| `write-tag` | `"true"` | When `true`, creates and pushes the computed tag to `origin`. If tag already exists, action fails and asks to enable workflow concurrency. |
 
 ## Outputs
 
