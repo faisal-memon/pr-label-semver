@@ -26,6 +26,8 @@ class Config:
     github: GitHubConfig
     ignored_labels: set[str]
     tag_prefix: str
+    write_tag: bool
+    write_major_tag: bool
 
     @classmethod
     def from_env(cls) -> Config:
@@ -41,10 +43,15 @@ class Config:
             ),
             ignored_labels=parse_ignored_labels(env("INPUT_IGNORE_LABELS", "dependencies")),
             tag_prefix=env("INPUT_TAG_PREFIX", "v"),
+            write_tag=env_bool("INPUT_WRITE_TAG"),
+            write_major_tag=env_bool("INPUT_WRITE_MAJOR_TAG"),
         )
 
     def validate(self) -> None:
         """Validate required runtime inputs for PR-label-driven bump resolution."""
+        if self.write_tag or self.write_major_tag:
+            raise ActionError("Tag writing is no longer supported; remove write-tag/write-major-tag and create tags in the release step.")
+
         if self.version_bump_override:
             return
 

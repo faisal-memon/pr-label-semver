@@ -17,6 +17,8 @@ class ConfigValidationTests(unittest.TestCase):
             ),
             ignored_labels=set(),
             tag_prefix="v",
+            write_tag=False,
+            write_major_tag=False,
         )
 
         with self.assertRaisesRegex(ActionError, "GITHUB_REPOSITORY is required"):
@@ -34,6 +36,8 @@ class ConfigValidationTests(unittest.TestCase):
             ),
             ignored_labels=set(),
             tag_prefix="v",
+            write_tag=False,
+            write_major_tag=False,
         )
 
         config.validate()

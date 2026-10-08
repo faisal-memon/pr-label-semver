@@ -19,6 +19,14 @@ inputs:
     description: Comma-separated PR labels that suppress the default patch release when no semver label is present. A semver label overrides this suppression. Set empty to disable it.
     required: false
     default: "dependencies"
+  write-tag:
+    description: Deprecated and unsupported. Set to false or remove this input; tags are created by the release step.
+    required: false
+    default: "false"
+  write-major-tag:
+    description: Deprecated and unsupported. Tags are created by the release step.
+    required: false
+    default: "false"
 outputs:
   new-tag:
     description: The computed next semantic version tag.
@@ -44,6 +52,8 @@ runs:
         INPUT_TAG_PREFIX: ${{ inputs.tag-prefix }}
         INPUT_GITHUB_TOKEN: ${{ inputs.github-token }}
         INPUT_IGNORE_LABELS: ${{ inputs.ignore-labels }}
+        INPUT_WRITE_TAG: ${{ inputs.write-tag }}
+        INPUT_WRITE_MAJOR_TAG: ${{ inputs.write-major-tag }}
       run: python3 "${{ github.action_path }}/main.py"
 
 branding:
