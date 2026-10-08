@@ -131,7 +131,7 @@ class PullRequestResolutionFlowTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary_directory:
             output_path = os.path.join(temporary_directory, "github-output")
             with patch.dict(os.environ, {"GITHUB_OUTPUT": output_path}):
-                write_outputs("", "", "", release_skipped=True)
+                write_outputs("", "", "", "", release_skipped=True)
 
             with open(output_path, encoding="utf-8") as output_file:
                 self.assertEqual(
