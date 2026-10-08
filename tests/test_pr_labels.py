@@ -136,7 +136,7 @@ class PullRequestResolutionFlowTests(unittest.TestCase):
             with open(output_path, encoding="utf-8") as output_file:
                 self.assertEqual(
                     output_file.read(),
-                    "new-tag=\nprevious-tag=\nversion-bump-used=\nrelease-skipped=true\n",
+                    "new-tag=\nmajor-tag=\nprevious-tag=\nversion-bump-used=\nrelease-skipped=true\n",
                 )
 
 
