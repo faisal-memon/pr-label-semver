@@ -19,15 +19,6 @@ inputs:
     description: Comma-separated PR labels that suppress the default patch release when no semver label is present. A semver label overrides this suppression. Set empty to disable it.
     required: false
     default: "dependencies"
-  write-tag:
-    description: When true, create and push the computed tag to origin. If the tag already exists, the action fails and points to workflow concurrency.
-    required: false
-    default: "true"
-  write-major-tag:
-    description: When true and write-tag is true, move and push the floating major tag (for example v1 or v0).
-    required: false
-    default: "false"
-
 outputs:
   new-tag:
     description: The computed next semantic version tag.
@@ -53,8 +44,6 @@ runs:
         INPUT_TAG_PREFIX: ${{ inputs.tag-prefix }}
         INPUT_GITHUB_TOKEN: ${{ inputs.github-token }}
         INPUT_IGNORE_LABELS: ${{ inputs.ignore-labels }}
-        INPUT_WRITE_TAG: ${{ inputs.write-tag }}
-        INPUT_WRITE_MAJOR_TAG: ${{ inputs.write-major-tag }}
       run: python3 "${{ github.action_path }}/main.py"
 
 branding:

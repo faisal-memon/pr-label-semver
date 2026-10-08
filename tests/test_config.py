@@ -16,8 +16,6 @@ class ConfigValidationTests(unittest.TestCase):
                 target_branch="",
             ),
             ignored_labels=set(),
-            write_tag=False,
-            write_major_tag=False,
             tag_prefix="v",
         )
 
@@ -35,8 +33,6 @@ class ConfigValidationTests(unittest.TestCase):
                 target_branch="",
             ),
             ignored_labels=set(),
-            write_tag=False,
-            write_major_tag=False,
             tag_prefix="v",
         )
 

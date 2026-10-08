@@ -67,8 +67,6 @@ class PullRequestResolutionFlowTests(unittest.TestCase):
                 target_branch="main",
             ),
             ignored_labels={"dependencies"},
-            write_tag=False,
-            write_major_tag=False,
             tag_prefix="v",
         )
         git = FakeGitForPullRequestLabels((42, ["semver:minor"]))
@@ -92,8 +90,6 @@ class PullRequestResolutionFlowTests(unittest.TestCase):
                 target_branch="main",
             ),
             ignored_labels={"dependencies"},
-            write_tag=False,
-            write_major_tag=False,
             tag_prefix="v",
         )
         git = FakeGitForPullRequestLabels(None)
@@ -117,8 +113,6 @@ class PullRequestResolutionFlowTests(unittest.TestCase):
                 target_branch="main",
             ),
             ignored_labels={"dependencies"},
-            write_tag=False,
-            write_major_tag=False,
             tag_prefix="v",
         )
         git = FakeGitForPullRequestLabels((42, ["dependencies", "team:platform"]))
