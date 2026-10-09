@@ -30,16 +30,7 @@ def main() -> int:
 
         log_info(f"Resolved bump={bump_type} from previous={previous_tag} to new={new_tag}")
 
-        if config.write_tag:
-            log_info(f"write-tag=true; creating and pushing {new_tag}")
-            git.push_tag(new_tag)
-
-            if config.write_major_tag:
-                major_tag = semver_tags.major_tag_for(new_tag)
-                log_info(f"write-major-tag=true; updating floating major tag {major_tag}")
-                git.push_major_tag(major_tag)
-
-        write_outputs(new_tag, previous_tag, bump_type)
+        write_outputs(new_tag, semver_tags.major_tag_for(new_tag), previous_tag, bump_type)
         log_info(
             "Wrote outputs "
             f"new-tag={new_tag} previous-tag={previous_tag} version-bump-used={bump_type}"
@@ -74,7 +65,7 @@ def compute_bump_type(config: Config, git: Git) -> str:
     return "patch"
 
 
-def write_outputs(new_tag: str, previous_tag: str, version_bump_used: str) -> None:
+def write_outputs(new_tag: str, major_tag: str, previous_tag: str, version_bump_used: str) -> None:
     """Append action outputs to the GitHub output file."""
     output_path = env("GITHUB_OUTPUT")
     if not output_path:
@@ -82,6 +73,7 @@ def write_outputs(new_tag: str, previous_tag: str, version_bump_used: str) -> No
 
     with open(output_path, "a", encoding="utf-8") as handle:
         handle.write(f"new-tag={new_tag}\n")
+        handle.write(f"major-tag={major_tag}\n")
         handle.write(f"previous-tag={previous_tag}\n")
         handle.write(f"version-bump-used={version_bump_used}\n")
 

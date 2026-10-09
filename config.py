@@ -23,9 +23,9 @@ class Config:
 
     version_bump_override: str
     github: GitHubConfig
+    tag_prefix: str
     write_tag: bool
     write_major_tag: bool
-    tag_prefix: str
 
     @classmethod
     def from_env(cls) -> Config:
@@ -46,6 +46,9 @@ class Config:
 
     def validate(self) -> None:
         """Validate required runtime inputs for PR-label-driven bump resolution."""
+        if self.write_tag or self.write_major_tag:
+            raise ActionError("Tag writing is no longer supported; remove write-tag/write-major-tag and create tags in the release step.")
+
         if self.version_bump_override:
             return
 

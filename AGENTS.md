@@ -33,20 +33,10 @@ By default, it computes outputs only.
 
 - Only namespaced PR labels are recognized: `semver:major`, `semver:minor`, and `semver:patch`.
 - Plain `major`, `minor`, and `patch` PR labels are intentionally unsupported.
-- `ignore-labels` defaults to `dependencies`; callers can provide a comma-separated replacement or an empty value to disable ignored labels.
 
 ## Tag Writing Behavior
 
-To avoid unexpected version reuse, tag creation is optimistic and strict:
-
-1. fetch tags
-2. compute the next version from the latest semantic-version tag
-3. create the candidate tag locally
-4. push the tag to `origin`
-
-If the push reports the tag already exists, the action fails and tells callers to enable workflow concurrency with `cancel-in-progress: false`.
-
-When `write-major-tag` is enabled, the action also force-updates the floating major tag for the computed major version (for example `v1` or `v0`).
+The action computes and emits the next tag but does not create or push tags. Callers should create the tag as part of their release step, after the artifact has been published successfully.
 
 ## Maintainer Notes
 

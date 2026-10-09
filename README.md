@@ -4,7 +4,6 @@ Use pull request labels to update semantic version tags.
 
 - Labels `semver:major`, `semver:minor`, or `semver:patch` update the corresponding part of semantic version
 - Defaults to `patch` if no label is specified
-- Automatic tracking of floating major tag to latest tag, i.e. `v1` -> `v1.2.3`
 
 ## Quick Start
 
@@ -31,12 +30,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Bump and write version tag
+      - name: Compute next version
         id: bump
         uses: faisal-memon/pr-label-semver@v0
         with:
-          write-tag: "true"
-          write-major-tag: "true"
           github-token: ${{ github.token }}
 
       - name: Create GitHub Release
@@ -50,9 +47,43 @@ jobs:
 > [!NOTE]
 > - Ensure `actions/checkout` uses `fetch-depth: 0`
 > - GitHub-hosted runners already include `python3`; self-hosted runners need Python 3 available on `PATH`
-> - Requires workflow permissions: `contents: write` to be able to write the semantic version tag
+> - The action computes the tag only; the following release step should create it after publishing succeeds
 > - Requires `pull-requests: read` when `version-bump` is empty (PR-label resolution path)
 > - Must configure workflow `concurrency` with `cancel-in-progress: false` to avoid tag collisions
+
+## Release workflow with an optional floating major tag
+
+The action computes the next tag but does not write it. A release workflow can publish the exact tag first, then optionally move a floating major tag as a separate final step:
+
+```yaml
+- name: Compute next version
+  id: bump
+  uses: faisal-memon/pr-label-semver@v0
+  with:
+    tag-prefix: api-v
+    github-token: ${{ github.token }}
+
+- name: Build and push image
+  uses: docker/build-push-action@v7
+  with:
+    context: .
+    push: true
+    tags: ghcr.io/${{ github.repository_owner }}/rag-agent-api:${{ steps.bump.outputs.new-tag }}
+
+- name: Create exact GitHub release
+  uses: softprops/action-gh-release@v3
+  with:
+    tag_name: ${{ steps.bump.outputs.new-tag }}
+    generate_release_notes: true
+
+# Optional and separate: this moves api-v0 to the exact release commit.
+- name: Move floating major tag
+  run: |
+    git tag -f api-v0 ${{ steps.bump.outputs.new-tag }}
+    git push --force origin refs/tags/api-v0
+```
+
+The exact release is valid if the optional floating-tag step fails. The operations are intentionally separate because GitHub does not provide a transaction covering the release and floating tag.
 
 ## Inputs
 
@@ -61,14 +92,13 @@ jobs:
 | `github-token` | `""` | Token used to query PR labels. Required when `version-bump` is empty (or provide `GITHUB_TOKEN` env). |
 | `tag-prefix` | `v` | Prefix to apply to tags (for example `v1.2.3`). |
 | `version-bump` | `""` | Explicit bump override: `major`, `minor`, or `patch`. Useful for `workflow_dispatch` or manual override. |
-| `write-major-tag` | `"false"` | When `true` and `write-tag` is `true`, moves and pushes floating major tag (for example `v1` or `v0`). |
-| `write-tag` | `"true"` | When `true`, creates and pushes the computed tag to `origin`. If tag already exists, action fails and asks to enable workflow concurrency. |
 
 ## Outputs
 
 | Output | Description |
 | --- | --- |
 | `new-tag` | Computed next tag (for example `v1.4.2`). |
+| `major-tag` | Computed floating major tag (for example `v1`). |
 | `previous-tag` | Latest existing tag used as the bump source. |
 | `version-bump-used` | Resolved bump type actually applied. |
 
