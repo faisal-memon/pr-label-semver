@@ -40,6 +40,24 @@ class ConfigValidationTests(unittest.TestCase):
 
         config.validate()
 
+    def test_rejects_removed_tag_writing_inputs(self):
+        config = Config(
+            version_bump_override="patch",
+            github=GitHubConfig(
+                token="",
+                api_url="https://api.github.com",
+                repository="",
+                sha="",
+                target_branch="",
+            ),
+            tag_prefix="v",
+            write_tag=True,
+            write_major_tag=False,
+        )
+
+        with self.assertRaisesRegex(ActionError, "Tag writing is no longer supported"):
+            config.validate()
+
 
 if __name__ == "__main__":
     unittest.main()

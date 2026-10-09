@@ -33,7 +33,6 @@ By default, it computes outputs only.
 
 - Only namespaced PR labels are recognized: `semver:major`, `semver:minor`, and `semver:patch`.
 - Plain `major`, `minor`, and `patch` PR labels are intentionally unsupported.
-- `ignore-labels` defaults to `dependencies`; callers can provide a comma-separated replacement or an empty value to disable ignored labels.
 
 ## Tag Writing Behavior
 
