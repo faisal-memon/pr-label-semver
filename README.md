@@ -35,10 +35,8 @@ jobs:
         uses: faisal-memon/pr-label-semver@v0
         with:
           github-token: ${{ github.token }}
-          ignore-labels: "dependencies"
 
       - name: Create GitHub Release
-        if: steps.bump.outputs.release-skipped != 'true'
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.bump.outputs.new-tag }}
@@ -92,7 +90,6 @@ The exact release is valid if the optional floating-tag step fails. The operatio
 | Input | Default | Description |
 | --- | --- | --- |
 | `github-token` | `""` | Token used to query PR labels. Required when `version-bump` is empty (or provide `GITHUB_TOKEN` env). |
-| `ignore-labels` | `"dependencies"` | Comma-separated PR labels that suppress the default patch release when no semver label is present. A semver label overrides this suppression. Set empty to disable it. |
 | `tag-prefix` | `v` | Prefix to apply to tags (for example `v1.2.3`). |
 | `version-bump` | `""` | Explicit bump override: `major`, `minor`, or `patch`. Useful for `workflow_dispatch` or manual override. |
 
@@ -104,7 +101,6 @@ The exact release is valid if the optional floating-tag step fails. The operatio
 | `major-tag` | Computed floating major tag (for example `v1`). |
 | `previous-tag` | Latest existing tag used as the bump source. |
 | `version-bump-used` | Resolved bump type actually applied. |
-| `release-skipped` | `true` when an ignored label is present without a semver label; publishing steps should be skipped. |
 
 ## How it works
 
@@ -113,10 +109,5 @@ The version always follows `major`.`minor`.`patch` format. Each time this action
 - Fetches the latest semantic-version tag matching the prefix (`vX.Y.Z`). If none exist, starts from `v0.0.0`
 - If `version-bump` is provided, it is used directly
 - Otherwise, the action checks labels (`semver:major`, `semver:minor`, `semver:patch`) on the PR associated with the commit
-- If the PR has an ignored label (by default, `dependencies`) and no semver label, the action succeeds without creating a tag and writes `release-skipped=true`
 - If no matching label is found, it defaults to `patch`
 - Selected part of tag is bumped
-
-An explicit semver label takes precedence over an ignored label, so a dependency update can still be deliberately released.
-
-When `release-skipped` can be `true`, add `if: steps.bump.outputs.release-skipped != 'true'` to every step that publishes a release artifact, including image publishing and release creation.
