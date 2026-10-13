@@ -37,12 +37,11 @@ jobs:
           fetch-depth: 0
 
 
-      - name: Bump and write version tag
+      - name: Compute next version
         id: bump
         uses: ./
         with:
           version-bump: ${{ github.event_name == 'workflow_dispatch' && inputs.version_bump || '' }}
-          write-major-tag: "true"
           github-token: ${{ github.token }}
 
       - name: Create GitHub Release
@@ -52,3 +51,8 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update floating major tag
+        run: |
+          git tag --force "${{ steps.bump.outputs.major-tag }}" "${{ steps.bump.outputs.new-tag }}"
+          git push --force origin "refs/tags/${{ steps.bump.outputs.major-tag }}"
