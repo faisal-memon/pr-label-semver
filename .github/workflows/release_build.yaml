@@ -54,5 +54,6 @@ jobs:
 
       - name: Update floating major tag
         run: |
+          git fetch --force origin "refs/tags/${{ steps.bump.outputs.new-tag }}:refs/tags/${{ steps.bump.outputs.new-tag }}"
           git tag --force "${{ steps.bump.outputs.major-tag }}" "${{ steps.bump.outputs.new-tag }}"
           git push --force origin "refs/tags/${{ steps.bump.outputs.major-tag }}"
