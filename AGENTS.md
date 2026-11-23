@@ -15,6 +15,7 @@ When no prior tags exist, it treats the baseline as `v0.0.0` (or `<tag-prefix>0.
 The action runs `main.py` directly and emits:
 
 - `new-tag`: the computed next version tag
+- `major-tag`: the floating major tag for the computed version (for example, `v0`)
 - `previous-tag`: the latest version tag used as the bump source
 - `version-bump-used`: the resolved bump type actually applied
 
@@ -36,7 +37,7 @@ By default, it computes outputs only.
 
 ## Tag Writing Behavior
 
-The action computes and emits the next tag but does not create or push tags. Callers should create the tag as part of their release step, after the artifact has been published successfully.
+The action computes and emits tags but does not create or push them. Callers should create the immutable version tag as part of their release step, then update the floating major tag after the version release has been created successfully.
 
 ## Maintainer Notes
 
@@ -53,4 +54,5 @@ The action computes and emits the next tag but does not create or push tags. Cal
 - The workflow defaults to `patch` when no semver label is present, and fails when more than one bump label is present.
 - `.github/workflows/release_build.yaml` is the self-release workflow for this repo.
 - It intentionally uses this action itself to dogfood behavior.
+- After creating the version release, it force-updates the floating major tag from the action's `major-tag` output.
 - It should keep workflow concurrency enabled to avoid tag collisions during releases.
